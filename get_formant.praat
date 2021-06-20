@@ -1,7 +1,7 @@
 sound$ = selected$("Sound")
 select Sound 'sound$'
 dur = Get total duration
-To Formant (burg)... 0 5 5000 0.025 50
+To Formant (burg)... 0 5 5500 0.025 50
 select Formant 'sound$'
 interval = 0.01
 cur = 0
