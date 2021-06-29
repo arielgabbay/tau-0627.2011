@@ -27,9 +27,17 @@ def load_raw_csv(filename):
 
 
 def main():
-    assert len(sys.argv) == 2, "Invalid number of arguments"
+    assert len(sys.argv) in (2, 5), "Invalid number of arguments"
+    multiples=None
+    if len(sys.argv) == 5:
+        try:
+            start, stop, step = (int(x) for x in sys.argv[2:])
+            multiples = range(start, stop + 1, step)
+        except ValueError:
+            print("Invalid duration multiplies: %s; format is start stop step (e.g. 1 10 1 for 1, 2, ... 10)")
     fmts = load_raw_csv(sys.argv[1])
-    extend_formant_durations(fmt)
+    extend_formant_durations(fmts, multiples=multiples)
+    fmts.to_csv(".".join(sys.argv[1].split(".")[:-1]) + "_extended.csv")
 
 
 if __name__ == "__main__":

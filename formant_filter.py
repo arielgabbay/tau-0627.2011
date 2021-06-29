@@ -54,7 +54,7 @@ item []:'''.format(total_dur, len(fmt_ranges)))
             f.write('''
     item [{0}]:
         class = "IntervalTier"
-        name = "AutoTier1"
+        name = "AutoTier{0}"
         xmin = 0
         xmax = {1}
         intervals: size = {2}'''.format(fmts_count, total_dur, len(intervals)))

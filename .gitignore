@@ -1,2 +1,3 @@
 *.praat.temp
 __pycache__/
+others/
