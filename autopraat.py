@@ -1,6 +1,7 @@
 import argparse
 import os
 import pandas as pd
+from collections import namedtuple
 
 
 def get_formant_range(df, min_duration, f1=None, f2=None, f3=None, f4=None, f5=None):
@@ -78,8 +79,7 @@ def fmt_range(arg):
     return tuple(float(v) for v in vals)
 
 
-def parse_args():
-    parser = argparse.ArgumentParser()
+def add_fmt_filter_args(parser):
     parser.add_argument("input", metavar="input_csv", help="The csv file with the extended formant data")
     parser.add_argument("output", metavar="output_textgrid", help="The TextGrid file to build")
     parser.add_argument("duration", type=int, help="The minimal duration (in milliseconds) of segments to find")
@@ -87,16 +87,13 @@ def parse_args():
         parser.add_argument("-f%d" % i, type=fmt_range, nargs="?", metavar="start-end", help="The range for the formant F%d; e.g. 700-740" % i)
     parser.add_argument("--overwrite", action="store_true", help="Whether to overwrite the output file if it exists")
     parser.add_argument("--formant-file", "-f", action="store", help="A csv containing formant ranges, given instead of formant arguments; each line is put in a separate tier and is of the form 700-750,,2000-2500,,")
-    args = parser.parse_args()
-    fmt_range_given = any(getattr(args, "f%d" % i) is not None for i in range(1, 6))
-    assert args.formant_file is None or not fmt_range_given, "Both formant arguments and formant file given"
-    assert args.formant_file is not None or fmt_range_given, "No formant ranges given"
+
+
+def run_fmt_filter(args):
+    arg_range = any(getattr(args, "f%d" % i) is not None for i in range(1, 6))
+    assert args.formant_file is None or not arg_range, "Both formant arguments and formant file given"
+    assert args.formant_file is not None or arg_range, "No formant ranges given"
     assert args.overwrite or not os.path.exists(args.output), "%s exists" % args.output
-    return args, fmt_range_given
-
-
-def main():
-    args, arg_range = parse_args()
     df = pd.read_csv(args.input)
     if arg_range:
         fmt_ranges = [{"f%d" % i: getattr(args, "f%d" % i) for i in range(1, 6)}]
@@ -108,6 +105,27 @@ def main():
             ranges = ranges.drop("f%d_raw" % i, axis=1)
         fmt_ranges = [dict(row) for _, row in ranges.iterrows()]
     build_textgrid(args.output, df, args.duration / 1000, fmt_ranges)
+
+
+Utility = namedtuple("utility", ["name", "description", "add_args", "run"])
+
+UTILITIES = [Utility("formant_filter", "Build a TextGrid file with boundaries marking intervals with certain mean formant values", add_fmt_filter_args, run_fmt_filter)]
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    sub = parser.add_subparsers(help="The utility to run (run --help with the utility for more details on each utility", dest="utility")
+    for util in UTILITIES:
+        p = sub.add_parser(util.name, description=util.description)
+        util.add_args(p)
+    args = parser.parse_args()
+    return args
+
+
+def main():
+    args = parse_args()
+    util = [u for u in UTILITIES if u.name == args.utility][0]
+    util.run(args)
 
 
 if __name__ == "__main__":

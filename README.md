@@ -1,5 +1,11 @@
 # AutoPRAAT
 
+## Overview
+
+This project was made to assist speech analysis using Praat by automating various processes.
+
+Using a Praat script and a supplementary Python script, you can extract data from a sound in Praat to a file which can then be passed to other utilities in the project for manipulation.
+
 ## Prerequisites
 
 You'll need Praat and Python 3 installed on your computer. The Python scripts require the `numpy` and `pandas` packages.
@@ -28,12 +34,16 @@ python3 extend_data.py formants.csv 1 10 1
 
 Where `formants.csv` is the `csv` file generated in step 1. The script will create a new file in the same location as the input file; for example, in the case shown above, a file `formants_extended.csv` will be created.
 
-### Step 3: building a TextGrid with formant filters
+### Step 3: running a utility on the data
 
-In the last step, we'll use the script `formant_filter.py` to build a Praat TextGrid file for the analyzed sound, where boundaries will be set to mark intervals where there are certain formant values. For example, to build a TextGrid where intervals of length at least 50 milliseconds long and a mean F1 value of 700 to 800 Hz are marked, run:
+Once data has been extracted from Praat to a `csv` file in steps 1 and 2, it can be passed to the main script, `autopraat.py` for various utilities. We give some examples here; for the full list of features, run `python3 autopraat.py --help`; for help on a specific utility, run `autopraat.py <utility> --help`, where `<utility>` is the utility name. Utilities do not modify the input `csv` file, so steps 1 and 2 can be run once for each sound analyzed (unless changes in the data resolution specified in step 2 are required).
+
+#### Building a TextGrid with formant filters
+
+Using the `formant_filter` utility, we can build a Praat TextGrid file for the analyzed sound, where boundaries will be set to mark intervals where there are certain mean formant values. For example, to build a TextGrid where intervals of length at least 50 milliseconds long and a mean F1 value of 700 to 800 Hz are marked, run:
 
 ```
-python3 formant_filter.py formants_extended.csv newTextGrid.TextGrid 50 -f1 700-800
+python3 autopraat.py formant_filter formants_extended.csv newTextGrid.TextGrid 50 -f1 700-800
 ```
 
 This will create the TextGrid file `newTextGrid.TextGrid` with the desired data. The script refuses to overwrite existing files by default; to overwrite files, pass the `--overwrite` flag.
@@ -49,6 +59,8 @@ Passing this file (using `--formant-file`) will create a TextGrid with two tiers
 
 ## Demonstration
 
+### The formant_filter utility
+
 For example, using Steve Ballmer as a guest speaker repeating the word "developers" six times ([link](https://www.youtube.com/watch?v=EMldOiiG1Ko)):
 
 ![ballmer](./demo_images/ballmer.png)
@@ -58,7 +70,7 @@ We find upon inspection of the first /ɛ/ ("de**vel**opers") that its first thre
 Extracting the formants and extending them (steps 1 and 2 above) and applying step 3 to the resulting `ballmer_extended.csv` file thus:
 
 ```
-python3 formant_filter.py ballmer_extended.csv ballmer.TextGrid 50 -f1 750-900 -f2 1400-1600 -f3 2500-2800
+python3 autopraat.py formant_filter ballmer_extended.csv ballmer.TextGrid 50 -f1 750-900 -f2 1400-1600 -f3 2500-2800
 ```
 
 Yields the following TextGrid (`ballmer.TextGrid`):
