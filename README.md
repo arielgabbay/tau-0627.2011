@@ -8,7 +8,7 @@ Using a Praat script and a supplementary Python script, you can extract data fro
 
 ## Prerequisites
 
-You'll need Praat and Python 3 installed on your computer. The Python scripts require the `numpy` and `pandas` packages.
+You'll need Praat and Python 3 installed on your computer. The Python scripts require the `numpy` and `pandas` packages. At the moment, running the Python scripts requires knowledge of how to run Python scripts from the command line. In the future, a more user-friendly interface may be added.
 
 ## How to use
 
