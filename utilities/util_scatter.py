@@ -63,9 +63,19 @@ def plot(inputs, grids, axes, annotate, no_stats):
         if annotate:
             for xi, yi, name in zip(*d):
                 plt1.annotate(name, (xi, yi))
-        tbl_data.append([np.mean(x), np.std(x), np.mean(y), np.std(y)])
-    colables = [axis_names[axes[0]] + " mean", axis_names[axes[0]] + " std", axis_names[axes[1]] + " mean", axis_names[axes[1]] + " std"]
+        if not no_stats:
+            stats = []
+            if axes[0] != "t":
+                stats += [np.mean(x), np.std(x)]
+            if axes[1] != "t":
+                stats += [np.mean(y), np.std(y)]
+        tbl_data.append(stats)
     if not no_stats:
+        colables = []
+        if axes[0] != "t":
+            colables += [axis_names[axes[0]] + " mean", axis_names[axes[0]] + " std"]
+        if axes[1] != "t":
+            colables += [axis_names[axes[1]] + " mean", axis_names[axes[1]] + " std"]
         plt2.set_title("Statistics", y=0.75)
         plt2.axis("off")
         plt2.table(cellText=tbl_data, colLabels=colables, rowLabels=inputs, rowColours=colors, loc="center")
