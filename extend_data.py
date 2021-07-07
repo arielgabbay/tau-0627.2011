@@ -23,7 +23,10 @@ def load_raw_csv(filename):
         t = f.read()
     t = t.replace("--undefined--", "")
     sio = StringIO(t)
-    return pd.read_csv(sio)
+    df = pd.read_csv(sio)
+    df.start = (df.start * 1000).astype(int)
+    df.end = (df.end * 1000).astype(int)
+    return df
 
 
 def main():

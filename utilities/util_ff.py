@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 
+
 NAME="formant_filter"
 DESCRIPTION="Build a TextGrid file with boundaries marking intervals with certain mean formant values"
 
@@ -30,7 +31,7 @@ xmin = 0
 xmax = {0}
 tiers? <exists>
 size = {1}
-item []:'''.format(total_dur, len(fmt_ranges)))
+item []:'''.format(total_dur / 1000, len(fmt_ranges)))
         fmts_count = 1
         for fmt_range in fmt_ranges:
             entries = get_formant_range(df, min_duration, **fmt_range)
@@ -59,14 +60,14 @@ item []:'''.format(total_dur, len(fmt_ranges)))
         name = "AutoTier{0}"
         xmin = 0
         xmax = {1}
-        intervals: size = {2}'''.format(fmts_count, total_dur, len(intervals)))
+        intervals: size = {2}'''.format(fmts_count, total_dur / 1000, len(intervals)))
             counter = 1
             for start, end, text in intervals:
                 f.write('''
         intervals [{0}]:
             xmin = {1}
             xmax = {2}
-            text = "{3}"'''.format(counter, start, end, text))
+            text = "{3}"'''.format(counter, start / 1000, end / 1000, text))
                 counter += 1
             fmts_count += 1
 
@@ -105,5 +106,5 @@ def run(args):
             ranges["f%d" % i] = ranges["f%d_raw" % i].apply(fmt_range)
             ranges = ranges.drop("f%d_raw" % i, axis=1)
         fmt_ranges = [dict(row) for _, row in ranges.iterrows()]
-    build_textgrid(args.output, df, args.duration / 1000, fmt_ranges)
+    build_textgrid(args.output, df, args.duration, fmt_ranges)
 

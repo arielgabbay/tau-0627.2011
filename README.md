@@ -57,9 +57,19 @@ If you want several tiers, with each tier corresponding to a different set of fo
 
 Passing this file (using `--formant-file`) will create a TextGrid with two tiers: the first will mark intervals where F1 is in the range 700-800 Hz and F2 is in the range 1000-1500 Hz; the second will mark intervals where F1 is in the range 600-650 Hz and F3 is in the range 2500-2800 Hz. Notice that all five formant fields should be included in each line, and can be left empty if no constraints are needed.
 
+#### Drawing a scatter plot
+
+Using the `formant_scatter` utility, we can draw a scatter plot from a TextGrid file, or from several such files. The utility receives data files (`csv` files generated in step 2) and corresponding TextGrid files with annotated intervals (intervals with text) and a specification of two values to be displayed in the axes of the scatter plot. Values can be any formant (1-5), segment duration or time. For example:
+
+```
+python3 autopraat.py formant_scatter formants_extended.csv text_grid.TextGrid 12
+```
+
+This command will display a scatter plot of the segments marked in `text_grid.TextGrid` (corresponding to the sound whose data is in `formants_extended.csv`), where the horizontal axis denotes F1 and the vertical axis denotes F2.
+
 ## Demonstration
 
-### The formant_filter utility
+### The `formant_filter` utility
 
 For example, using Steve Ballmer as a guest speaker repeating the word "developers" six times ([link](https://www.youtube.com/watch?v=EMldOiiG1Ko)):
 
@@ -78,3 +88,13 @@ Yields the following TextGrid (`ballmer.TextGrid`):
 ![ballmer_w_text](./demo_images/ballmer_w_text.png)
 
 Where all six /ɛ/ phones are marked (intervals 1, 3, 5, 7, 8 and 10), with a few false-positives where background noise happens to give similar formant values in Praat (a less noisy recording would lead to fewer errors).
+
+### The `formant_scatter` utility
+
+Using the same sound from above and the resulting TextGrid file, we plot F1 and F2 (this is an example of only one TextGrid being plotted; several different TextGrids can be plotted in the same graph if needed).
+
+```
+python3 autopraat.py formant_scatter ballmer_extended.csv ballmer.TextGrid 12
+```
+
+![](./demo_images/Figure_1.png)
