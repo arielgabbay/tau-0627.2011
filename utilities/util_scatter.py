@@ -25,16 +25,18 @@ def get_grid_intervals(grid, step):
     return intervals
 
 
-def plot(inputs, grids, axes):
+def plot(inputs, grids, axes, annotate, no_stats):
     data = {}
     axis_names = {str(i): "F%d" % i for i in range(1, 6)}
     axis_names.update({"t": "time", "d": "duration"})
-    fig, (plt1, plt2) = plt.subplots(2)
+    fig, plts = plt.subplots(1 if no_stats else 2)
+    if no_stats:
+        plt1 = plts
+    else:
+        plt1, plt2 = plts
     plt1.set(xlabel=axis_names[axes[0]])
     plt1.set(ylabel=axis_names[axes[1]])
     plt1.set_title("Scatter")
-    plt2.set_title("Statistics", y=0.75)
-    plt2.axis("off")
     for csv, grid in zip(inputs, grids):
         df = pd.read_csv(csv)
         step = df.iloc[0].end
@@ -58,17 +60,23 @@ def plot(inputs, grids, axes):
         csv, d = item
         x, y, names = d
         plt1.scatter(x, y, color=color)
-        for xi, yi, name in zip(*d):
-            plt1.annotate(name, (xi, yi))
+        if annotate:
+            for xi, yi, name in zip(*d):
+                plt1.annotate(name, (xi, yi))
         tbl_data.append([np.mean(x), np.std(x), np.mean(y), np.std(y)])
     colables = [axis_names[axes[0]] + " mean", axis_names[axes[0]] + " std", axis_names[axes[1]] + " mean", axis_names[axes[1]] + " std"]
-    plt2.table(cellText=tbl_data, colLabels=colables, rowLabels=inputs, rowColours=colors, loc="center")
+    if not no_stats:
+        plt2.set_title("Statistics", y=0.75)
+        plt2.axis("off")
+        plt2.table(cellText=tbl_data, colLabels=colables, rowLabels=inputs, rowColours=colors, loc="center")
     plt.show()
 
 
 def add_args(parser):
     parser.add_argument("input", metavar="csv grid", help="The csv and TextGrid files with the extended formant data and boundaries (can pass several pairs)", nargs="+")
     parser.add_argument("axes", help="The axes to plot. For example, t1 plots time in the horizontal axis and F1 in the vertical; options are t (time), d (duration), 1, 2, 3, 4, 5")
+    parser.add_argument("-t", "--annotate", action="store_true", help="If specified, TextGrid text is added to the scatter plot")
+    parser.add_argument("-s", "--no-stats", action="store_true", help="If specified, only the scatter plot is plotted")
 
 
 def run(args):
@@ -76,5 +84,5 @@ def run(args):
     assert len(args.axes) == 2 and all(c in "td12345" for c in args.axes), "Invalid axes: %s" % args.axes
     csvs = [args.input[i] for i in range(0, len(args.input), 2)]
     grids = [args.input[i] for i in range(1, len(args.input), 2)]
-    plot(csvs, grids, args.axes)
+    plot(csvs, grids, args.axes, args.annotate, args.no_stats)
 

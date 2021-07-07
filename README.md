@@ -94,7 +94,7 @@ Where all six /ɛ/ phones are marked (intervals 1, 3, 5, 7, 8 and 10), with a fe
 Using the same sound from above and the resulting TextGrid file, we plot F1 and F2 (this is an example of only one TextGrid being plotted; several different TextGrids can be plotted in the same graph if needed).
 
 ```
-python3 autopraat.py formant_scatter ballmer_extended.csv ballmer.TextGrid 12
+python3 autopraat.py formant_scatter ballmer_extended.csv ballmer.TextGrid 12 --annotate
 ```
 
 ![](./demo_images/Figure_1.png)
