@@ -3,7 +3,7 @@ select Sound 'sound$'
 dur = Get total duration
 To Formant (burg)... 0 5 5500 0.025 50
 select Formant 'sound$'
-interval = 0.01
+interval = 0.005
 cur = 0
 filename$ = chooseWriteFile$: "Choose destination file", sound$ + "_formants.csv"
 writeFileLine: "'filename$'", "start,end,F1,F2,F3,F4,F5"

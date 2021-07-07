@@ -65,7 +65,7 @@ Using the `formant_scatter` utility, we can draw a scatter plot from a TextGrid 
 python3 autopraat.py formant_scatter formants_extended.csv text_grid.TextGrid 12
 ```
 
-This command will display a scatter plot of the segments marked in `text_grid.TextGrid` (corresponding to the sound whose data is in `formants_extended.csv`), where the horizontal axis denotes F1 and the vertical axis denotes F2.
+This command will display a scatter plot of the segments marked in `text_grid.TextGrid` (corresponding to the sound whose data is in `formants_extended.csv`), where the horizontal axis denotes F1 and the vertical axis denotes F2. It will also draw a table with the mean value and standard deviation of each axis.
 
 ## Demonstration
 

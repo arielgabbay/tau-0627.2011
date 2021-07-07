@@ -24,8 +24,8 @@ def load_raw_csv(filename):
     t = t.replace("--undefined--", "")
     sio = StringIO(t)
     df = pd.read_csv(sio)
-    df.start = (df.start * 1000).astype(int)
-    df.end = (df.end * 1000).astype(int)
+    df.start = (df.start * 1000).apply(lambda x: round(x))  # astype(int) causes some roundoff problems
+    df.end = (df.end * 1000).apply(lambda x: round(x))
     return df
 
 
