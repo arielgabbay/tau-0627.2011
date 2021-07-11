@@ -10,6 +10,40 @@ Using a Praat script and a supplementary Python script, you can extract data fro
 
 You'll need Praat and Python 3 installed on your computer. The Python scripts require the `numpy` and `pandas` packages. At the moment, running the Python scripts requires knowledge of how to run Python scripts from the command line. In the future, a more user-friendly interface may be added.
 
+## Demonstration
+
+Before showing how to use the scripts in this project, we demonstrate some of the utilities included.
+
+### The `formant_filter` utility
+
+For example, using Steve Ballmer as a guest speaker repeating the word "developers" six times ([link](https://www.youtube.com/watch?v=EMldOiiG1Ko)):
+
+![ballmer](./demo_images/ballmer.png)
+
+We find upon inspection of the first /ɛ/ ("de**vel**opers") that its first three formants are about 847, 1527, 2735 Hz.
+
+Extracting the formants and extending them (steps 1 and 2 below) and running the `formant_filter` utility on the resulting `ballmer_extended.csv` file thus:
+
+```
+python3 autopraat.py formant_filter ballmer_extended.csv ballmer.TextGrid 50 -f1 750-900 -f2 1400-1600 -f3 2500-2800
+```
+
+Yields the following TextGrid (`ballmer.TextGrid`):
+
+![ballmer_w_text](./demo_images/ballmer_w_text.png)
+
+Where all six /ɛ/ phones are marked (intervals 1, 3, 5, 7, 8 and 10), with a few false-positives where background noise happens to give similar formant values in Praat (a less noisy recording would lead to fewer errors).
+
+### The `formant_scatter` utility
+
+Using the same sound from above and the resulting TextGrid file, we plot F1 and F2 (this is an example of only one TextGrid being plotted; several different TextGrids can be plotted in the same graph if needed).
+
+```
+python3 autopraat.py formant_scatter ballmer_extended.csv ballmer.TextGrid 12 --annotate
+```
+
+![](./demo_images/Figure_1.png)
+
 ## How to use
 
 ### Step 1: extracting raw formant data from Praat
@@ -66,35 +100,3 @@ python3 autopraat.py formant_scatter formants_extended.csv text_grid.TextGrid 12
 ```
 
 This command will display a scatter plot of the segments marked in `text_grid.TextGrid` (corresponding to the sound whose data is in `formants_extended.csv`), where the horizontal axis denotes F1 and the vertical axis denotes F2. It will also draw a table with the mean value and standard deviation of each axis.
-
-## Demonstration
-
-### The `formant_filter` utility
-
-For example, using Steve Ballmer as a guest speaker repeating the word "developers" six times ([link](https://www.youtube.com/watch?v=EMldOiiG1Ko)):
-
-![ballmer](./demo_images/ballmer.png)
-
-We find upon inspection of the first /ɛ/ ("de**vel**opers") that its first three formants are about 847, 1527, 2735 Hz.
-
-Extracting the formants and extending them (steps 1 and 2 above) and applying step 3 to the resulting `ballmer_extended.csv` file thus:
-
-```
-python3 autopraat.py formant_filter ballmer_extended.csv ballmer.TextGrid 50 -f1 750-900 -f2 1400-1600 -f3 2500-2800
-```
-
-Yields the following TextGrid (`ballmer.TextGrid`):
-
-![ballmer_w_text](./demo_images/ballmer_w_text.png)
-
-Where all six /ɛ/ phones are marked (intervals 1, 3, 5, 7, 8 and 10), with a few false-positives where background noise happens to give similar formant values in Praat (a less noisy recording would lead to fewer errors).
-
-### The `formant_scatter` utility
-
-Using the same sound from above and the resulting TextGrid file, we plot F1 and F2 (this is an example of only one TextGrid being plotted; several different TextGrids can be plotted in the same graph if needed).
-
-```
-python3 autopraat.py formant_scatter ballmer_extended.csv ballmer.TextGrid 12 --annotate
-```
-
-![](./demo_images/Figure_1.png)
