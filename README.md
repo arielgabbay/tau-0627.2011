@@ -22,7 +22,7 @@ For example, using Steve Ballmer as a guest speaker repeating the word "develope
 
 We find upon inspection of the first /ɛ/ ("de**vel**opers") that its first three formants are about 847, 1527, 2735 Hz.
 
-Extracting the formants and extending them (steps 1 and 2 below) and running the `formant_filter` utility on the resulting `ballmer_extended.csv` file thus:
+Extracting the formants and extending them (steps [1](#Step-1:-extracting-raw-formant-data-from-Praat) and [2](#Step-2:-extending-the-data) below) and running the `formant_filter` utility on the resulting `ballmer_extended.csv` file thus:
 
 ```
 python3 autopraat.py formant_filter ballmer_extended.csv ballmer.TextGrid 50 -f1 750-900 -f2 1400-1600 -f3 2500-2800
