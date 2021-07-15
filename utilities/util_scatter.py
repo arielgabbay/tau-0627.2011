@@ -26,11 +26,14 @@ def get_grid_intervals(grid, step):
     return intervals
 
 
-def plot(inputs, grids, axes, annotate, no_stats):
+def plot(inputs, grids, axes, annotate, no_stats, legend):
     data = {}
     axis_names = {str(i): "F%d" % i for i in range(1, 6)}
     axis_names.update({"t": "time", "d": "duration", "n": ""})
     fig, plts = plt.subplots(1 if no_stats else 2)
+    if legend is None:
+        legend = inputs
+    legend_dict = {c: l for c, l in zip(inputs, legend)}
     if no_stats:
         plt1 = plts
     else:
@@ -70,22 +73,24 @@ def plot(inputs, grids, axes, annotate, no_stats):
         if not no_stats:
             stats = []
             if axes[0] not in "tn":
-                stats += [np.mean(x), np.std(x)]
+                stats += [np.mean(x).round(3), np.median(x).round(3), np.std(x).round(3)]
             if axes[1] not in "tn":
-                stats += [np.mean(y), np.std(y)]
+                stats += [np.mean(y).round(3), np.median(y).round(3), np.std(y).round(3)]
             tbl_data.append(stats)
-        handles.append(mpatches.Patch(color=color, label=csv))
+        handles.append(mpatches.Patch(color=color, label=legend_dict[csv]))
     if len(inputs) > 1:
         plt.legend(handles=handles)
     if not no_stats:
         colables = []
         if axes[0] not in "tn":
-            colables += [axis_names[axes[0]] + " mean", axis_names[axes[0]] + " std"]
+            n = axis_names[axes[0]] + " "
+            colables += [n + "mean", n + "median", n + "std"]
         if axes[1] not in "tn":
-            colables += [axis_names[axes[1]] + " mean", axis_names[axes[1]] + " std"]
+            n = axis_names[axes[1]] + " "
+            colables += [n + "mean", n + "median", n + "std"]
         plt2.set_title("Statistics", y=0.75)
         plt2.axis("off")
-        plt2.table(cellText=tbl_data, colLabels=colables, rowLabels=inputs, rowColours=colors, loc="center")
+        plt2.table(cellText=tbl_data, colLabels=colables, rowLabels=legend, rowColours=colors, loc="center")
     plt.show()
 
 
@@ -94,6 +99,7 @@ def add_args(parser):
     parser.add_argument("axes", help="The axes to plot. For example, t1 plots time in the horizontal axis and F1 in the vertical; options are t (time), d (duration), n (none), 1, 2, 3, 4, 5")
     parser.add_argument("-t", "--annotate", action="store_true", help="If specified, TextGrid text is added to the scatter plot")
     parser.add_argument("-s", "--no-stats", action="store_true", help="If specified, only the scatter plot is plotted")
+    parser.add_argument("-l", "--legend", help="Names of files in the color legend (comma-separated)", nargs="?")
 
 
 def run(args):
@@ -101,5 +107,9 @@ def run(args):
     assert len(args.axes) == 2 and all(c in "ntd12345" for c in args.axes), "Invalid axes: %s" % args.axes
     csvs = [args.input[i] for i in range(0, len(args.input), 2)]
     grids = [args.input[i] for i in range(1, len(args.input), 2)]
-    plot(csvs, grids, args.axes, args.annotate, args.no_stats)
+    if args.legend is not None:
+        legend = args.legend.split(",")
+    else:
+        legend = None
+    plot(csvs, grids, args.axes, args.annotate, args.no_stats, legend)
 
